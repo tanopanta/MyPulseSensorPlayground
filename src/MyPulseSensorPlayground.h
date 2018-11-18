@@ -21,41 +21,13 @@ class PulseSensorPlayground {
 
     //---------- PulseSensor Manager functions
 
-    /*
-       Construct the one PulseSensor Playground manager,
-       that manages the given number of PulseSensors.
-       Your Sketch should declare either PulseSensorPlayground() for one sensor
-       or PulseSensorPlayground(n) for n PulseSensors.
-
-       For example:
-         PulseSensorPlayground pulse();
-       or
-         PulseSensorPlayground pulse(2); // for 2 PulseSensors.
-    */
-    PulseSensorPlayground(int numberOfSensors = 1);
+    PulseSensorPlayground();
 
     /*
        Start reading and processing data from the PulseSensors.
 
        Your Sketch should make all necessary PulseSensor configuration calls
        before calling begin().
-
-       If the Sketch defined USE_ARDUINO_INTERRUPTS as true, this function
-       sets up and turns on interrupts for the PulseSensor.
-
-       If instead the Sketch defined USE_ARDUINO_INTERRUPTS as false,
-       it initializes what's necessary for the Sketch to process
-       PulsSensor signals. See sawNewSample(), below.
-
-       Returns true if successful, false if unsuccessful.
-       Returns false if PulseSensorPlayground doesn't yet support
-       interrupts on this Arduino platform and the user's Sketch
-       did a #define USE_ARDUINO_INTERRUPTS true.
-
-       If begin() returns false, you can either use a different
-       type of Arduino platform, or you can change your Sketch's
-       definition of USE_ARDUINO_INTERRUPTS to false:
-         #define USE_ARDUINO_INTERRUPTS false
     */
     boolean begin();
 
@@ -65,16 +37,6 @@ class PulseSensorPlayground {
        only if you either 1) want to do something with each sample of the
        PulseSensor signals, or 2) your Sketch doesn't use interrupts
        to read from the PulseSensors.
-
-       NOTE: If your Sketch defined USE_ARDUINO_INTERRUPTS as false,
-       you must call pulse.sawNewSample() frequently (at least
-       once every 2 milliseconds) to assure that PulseSensor signals
-       are read accurately.
-       A typical loop() that doesn't use interrupts will contain:
-         if (pulse.sawNewSample()) {
-           int latest = pulse.getLatestSample();
-           ...do whatever you want with the sample read from the PulseSensor.
-         }
     */
     boolean sawNewSample();
 
@@ -89,7 +51,7 @@ class PulseSensorPlayground {
        sensorIndex = optional, index (0..numberOfSensors - 1)
          of the PulseSensor to configure.
     */
-    void analogInput(int inputPin, int sensorIndex = 0);
+    void analogInput(int inputPin);
 
     /*
        By default, the Playground doesn't blink LEDs automatically.
@@ -105,7 +67,7 @@ class PulseSensorPlayground {
        sensorIndex = optional, index (0..numberOfSensors - 1)
          of the PulseSensor to configure.
     */
-    void blinkOnPulse(int blinkPin, int sensorIndex = 0);
+    void blinkOnPulse(int blinkPin);
 
     /*
        By default, the Playground doesn't blink LEDs automatically.
@@ -121,7 +83,7 @@ class PulseSensorPlayground {
        sensorIndex = optional, index (0..numberOfSensors - 1)
          of the PulseSensor to configure.
     */
-    void fadeOnPulse(int fadePin, int sensorIndex = 0);
+    void fadeOnPulse(int fadePin);
 
     /*
        (Internal to library - do not call from a Sketch)
@@ -137,7 +99,7 @@ class PulseSensorPlayground {
        sensorIndex = optional, index (0..numberOfSensors - 1)
          of the PulseSensor of interest.
     */
-    int getLatestSample(int sensorIndex = 0);
+    int getLatestSample();
 
     /*
        Returns the latest beats-per-minute measure for the given PulseSensor.
@@ -148,7 +110,7 @@ class PulseSensorPlayground {
        sensorIndex = optional, index (0..numberOfSensors - 1)
          of the PulseSensor of interest.
     */
-    int getBeatsPerMinute(int sensorIndex = 0);
+    int getBeatsPerMinute();
 
     /*
        Returns the latest IBI (inter-beat interval, in milliseconds) measure
@@ -160,7 +122,7 @@ class PulseSensorPlayground {
        sensorIndex = optional, index (0..numberOfSensors - 1)
          of the PulseSensor of interest.
     */
-    int getInterBeatIntervalMs(int sensorIndex = 0);
+    int getInterBeatIntervalMs();
 
     /*
        Returns true if a new heartbeat (pulse) has been detected
@@ -175,7 +137,7 @@ class PulseSensorPlayground {
        sensorIndex = optional, index (0..numberOfSensors - 1)
          of the PulseSensor of interest.
     */
-    boolean sawStartOfBeat(int sensorIndex = 0);
+    boolean sawStartOfBeat();
 
     /*
        Returns true if the given PulseSensor signal is currently
@@ -192,41 +154,33 @@ class PulseSensorPlayground {
        sensorIndex = optional, index (0..numberOfSensors - 1)
          of the PulseSensor of interest.
     */
-    boolean isInsideBeat(int sensorIndex = 0);
+    boolean isInsideBeat();
 
     /*
        By default, the threshold value is 530.
        threshold is used to find the heartbeat
        adjust this value up in the setup function to avoid noise.
     */
-    void setThreshold(int threshold, int sensorIndex = 0);
+    void setThreshold(int threshold);
 
     /*
         Returns the current amplitude of the pulse waveform.
     */
-    int getPulseAmplitude(int sensorIndex = 0);
+    int getPulseAmplitude();
 
     /*
        Returns the sample number when the last beat was found. 2mS resolution.
     */
-    unsigned long getLastBeatTime(int sensorIndex = 0);
+    unsigned long getLastBeatTime();
 
     // (internal to the library) "this" pointer for the ISR.
     static PulseSensorPlayground *OurThis;
 
   private:
 
-    /*
-       Configure and enable interrupts to read samples.
-       Call only if PulseSensorPlayground::UsingInterrupts is true.
-
-       This function is defined (vs. declared here) in interrupts.h
-    */
     void setupInterrupt();
 
-
-    byte SensorCount;              // number of PulseSensors in Sensors[].
-    PulseSensor *Sensors;          // use Sensors[idx] to access a sensor.
+    PulseSensor *  Sensor;          // use Sensor to access a sensor.
     volatile unsigned long NextSampleMicros; // Desired time to sample next.
     volatile boolean SawNewSample; // "A sample has arrived from the ISR"
 };

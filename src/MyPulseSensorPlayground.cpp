@@ -7,21 +7,14 @@
 PulseSensorPlayground *PulseSensorPlayground::OurThis;
 
 
-PulseSensorPlayground::PulseSensorPlayground(int numberOfSensors) {
+PulseSensorPlayground::PulseSensorPlayground() {
   // Save a static pointer to our playground so the ISR can read it.
   OurThis = this;
-
-  // Dynamically create the array to minimize ram usage.
-  SensorCount = (byte) numberOfSensors;
-  Sensors = new PulseSensor[SensorCount];
-
+  Sensor = new PulseSensor;
 }
 
 boolean PulseSensorPlayground::PulseSensorPlayground::begin() {
-
-  for (int i = 0; i < SensorCount; ++i) {
-    Sensors[i].initializeLEDs();
-  }
+  Sensor->initializeLEDs();
 
   // Note the time, for non-interrupt sampling and for timing statistics.
   NextSampleMicros = micros() + MICROS_PER_READ;
@@ -38,25 +31,16 @@ boolean PulseSensorPlayground::PulseSensorPlayground::begin() {
   return true;
 }
 
-void PulseSensorPlayground::analogInput(int inputPin, int sensorIndex) {
-  if (sensorIndex != constrain(sensorIndex, 0, SensorCount)) {
-    return; // out of range.
-  }
-  Sensors[sensorIndex].analogInput(inputPin);
+void PulseSensorPlayground::analogInput(int inputPin) {
+  Sensor->analogInput(inputPin);
 }
 
-void PulseSensorPlayground::blinkOnPulse(int blinkPin, int sensorIndex) {
-  if (sensorIndex != constrain(sensorIndex, 0, SensorCount)) {
-    return; // out of range.
-  }
-  Sensors[sensorIndex].blinkOnPulse(blinkPin);
+void PulseSensorPlayground::blinkOnPulse(int blinkPin) {
+  Sensor->blinkOnPulse(blinkPin);
 }
 
-void PulseSensorPlayground::fadeOnPulse(int fadePin, int sensorIndex) {
-  if (sensorIndex != constrain(sensorIndex, 0, SensorCount)) {
-    return; // out of range.
-  }
-  Sensors[sensorIndex].fadeOnPulse(fadePin);
+void PulseSensorPlayground::fadeOnPulse(int fadePin) {
+  Sensor->fadeOnPulse(fadePin);
 }
 
 boolean PulseSensorPlayground::sawNewSample() {
@@ -84,74 +68,45 @@ void PulseSensorPlayground::onSampleTime() {
      We do this separately from processing the voltages
      to minimize jitter in acquiring the signal.
   */
-  for (int i = 0; i < SensorCount; ++i) {
-    Sensors[i].readNextSample();
-  }
+  Sensor->readNextSample();
 
-  // Process those voltages.
-  for (int i = 0; i < SensorCount; ++i) {
-    Sensors[i].processLatestSample();
-    Sensors[i].updateLEDs();
-  }
+  Sensor->processLatestSample();
+  Sensor->updateLEDs();
 
   // Set the flag that says we've read a sample since the Sketch checked.
   SawNewSample = true;
  }
 
-int PulseSensorPlayground::getLatestSample(int sensorIndex) {
-  if (sensorIndex != constrain(sensorIndex, 0, SensorCount)) {
-    return -1; // out of range.
-  }
-  return Sensors[sensorIndex].getLatestSample();
+int PulseSensorPlayground::getLatestSample() {
+  return Sensor->getLatestSample();
 }
 
-int PulseSensorPlayground::getBeatsPerMinute(int sensorIndex) {
-  if (sensorIndex != constrain(sensorIndex, 0, SensorCount)) {
-    return -1; // out of range.
-  }
-  return Sensors[sensorIndex].getBeatsPerMinute();
+int PulseSensorPlayground::getBeatsPerMinute() {
+  return Sensor->getBeatsPerMinute();
 }
 
-int PulseSensorPlayground::getInterBeatIntervalMs(int sensorIndex) {
-  if (sensorIndex != constrain(sensorIndex, 0, SensorCount)) {
-    return -1; // out of range.
-  }
-  return Sensors[sensorIndex].getInterBeatIntervalMs();
+int PulseSensorPlayground::getInterBeatIntervalMs() {
+  return Sensor->getInterBeatIntervalMs();
 }
 
-boolean PulseSensorPlayground::sawStartOfBeat(int sensorIndex) {
-  if (sensorIndex != constrain(sensorIndex, 0, SensorCount)) {
-    return false; // out of range.
-  }
-  return Sensors[sensorIndex].sawStartOfBeat();
+boolean PulseSensorPlayground::sawStartOfBeat() {
+  return Sensor->sawStartOfBeat();
 }
 
-boolean PulseSensorPlayground::isInsideBeat(int sensorIndex) {
-  if (sensorIndex != constrain(sensorIndex, 0, SensorCount)) {
-    return false; // out of range.
-  }
-  return Sensors[sensorIndex].isInsideBeat();
+boolean PulseSensorPlayground::isInsideBeat() {
+  return Sensor->isInsideBeat();
 }
 
-void PulseSensorPlayground::setThreshold(int threshold, int sensorIndex) {
-  if (sensorIndex != constrain(sensorIndex, 0, SensorCount)) {
-    return; // out of range.
-  }
-  Sensors[sensorIndex].setThreshold(threshold);
+void PulseSensorPlayground::setThreshold(int threshold) {
+  Sensor->setThreshold(threshold);
 }
 
 
-int PulseSensorPlayground::getPulseAmplitude(int sensorIndex) {
-  if (sensorIndex != constrain(sensorIndex, 0, SensorCount)) {
-    return -1; // out of range.
-  }
-  return Sensors[sensorIndex].getPulseAmplitude();
+int PulseSensorPlayground::getPulseAmplitude() {
+  return Sensor->getPulseAmplitude();
 }
 
-unsigned long PulseSensorPlayground::getLastBeatTime(int sensorIndex) {
-  if (sensorIndex != constrain(sensorIndex, 0, SensorCount)) {
-    return -1; // out of range.
-  }
-  return Sensors[sensorIndex].getLastBeatTime();
+unsigned long PulseSensorPlayground::getLastBeatTime() {
+  return Sensor->getLastBeatTime();
 }
 
