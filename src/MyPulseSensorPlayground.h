@@ -39,42 +39,14 @@ class PulseSensorPlayground {
        call pulse.analogInput(pin) or pulse.analogInput(pin, sensorIndex).
 
        inputPin = the analog input this PulseSensor is connected to.
-       sensorIndex = optional, index (0..numberOfSensors - 1)
-         of the PulseSensor to configure.
     */
     void analogInput(int inputPin);
 
-    /*
-       By default, the Playground doesn't blink LEDs automatically.
-
-       If you wish the Playground to automatically blink an LED
-       during each detected pulse,
-       call pulse.blinkOnPulse(blinkPin) or
-       pulse.blinkOnPulse(blinkPin, sensorIndex).
-
-       blinkPin = the pin to blink on each pulse, which you've connected
-         to an LED and 220 ohm resistor, or the built in LED pin
-         on your Arduino (for example, pin 13 on Arduino Uno).
-       sensorIndex = optional, index (0..numberOfSensors - 1)
-         of the PulseSensor to configure.
-    */
-    void blinkOnPulse(int blinkPin);
 
     /*
-       By default, the Playground doesn't blink LEDs automatically.
-
-       If you wish the Playground to automatically blink a fading LED
-       during each detected pulse,
-       call fadeOnPulse(fadePin) or fadeOnPulse(fadePin, sensorIndex).
-
-       NOTE: the fade pin must be a PWM (Pulse-Width Modulation) pin.
-
-       fadePin = the PWM pin to blink and fade on each pulse,
-         which is connected to an LED and a current-limit resistor.
-       sensorIndex = optional, index (0..numberOfSensors - 1)
-         of the PulseSensor to configure.
+       beep
     */
-    void fadeOnPulse(int fadePin);
+    void beepOnPulse(int paintPin);
 
     /*
        (Internal to library - do not call from a Sketch)

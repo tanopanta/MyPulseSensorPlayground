@@ -14,7 +14,6 @@ PulseSensorPlayground::PulseSensorPlayground() {
 }
 
 boolean PulseSensorPlayground::PulseSensorPlayground::begin() {
-  Sensor->initializeLEDs();
 
   // Lastly, set up and turn on the interrupts.
   if (!PulseSensorPlaygroundSetupInterrupt()) {
@@ -29,12 +28,9 @@ void PulseSensorPlayground::analogInput(int inputPin) {
   Sensor->analogInput(inputPin);
 }
 
-void PulseSensorPlayground::blinkOnPulse(int blinkPin) {
-  Sensor->blinkOnPulse(blinkPin);
-}
 
-void PulseSensorPlayground::fadeOnPulse(int fadePin) {
-  Sensor->fadeOnPulse(fadePin);
+void PulseSensorPlayground::beepOnPulse(int beepPin) {
+    Sensor->beepOnPulse(beepPin);
 }
 
 
@@ -49,8 +45,8 @@ void PulseSensorPlayground::onSampleTime() {
   Sensor->readNextSample();
 
   Sensor->processLatestSample();
-  Sensor->updateLEDs();
- }
+  Sensor->playBeep();
+}
 
 int PulseSensorPlayground::getLatestSample() {
   return Sensor->getLatestSample();

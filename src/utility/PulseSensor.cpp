@@ -4,28 +4,13 @@
 #include <MyPulseSensorPlayground.h>
 
 /*
-   Internal constants controlling the rate of fading for the FadePin.
-
-   FADE_SCALE = FadeLevel / FADE_SCALE is the corresponding PWM value.
-   FADE_LEVEL_PER_SAMPLE = amount to decrease FadeLevel per sample.
-   MAX_FADE_LEVEL = maximum FadeLevel value.
-
-   The time (milliseconds) to fade to black =
-     (MAX_FADE_LEVEL / FADE_LEVEL_PER_SAMPLE) * sample time (2ms)
-*/
-#define FADE_SCALE 10
-#define FADE_LEVEL_PER_SAMPLE 12
-#define MAX_FADE_LEVEL (255 * FADE_SCALE)
-
-/*
    Constructs a Pulse detector that will process PulseSensor voltages
    that the caller reads from the PulseSensor.
 */
 PulseSensor::PulseSensor() {
   // Initialize the default configuration
   InputPin = 36;
-  BlinkPin = -1;
-  FadePin = -1;
+  BeepPin = -1;
 
   // Initialize (seed) the pulse detector
   sampleIntervalMs = PulseSensorPlayground::MICROS_PER_READ / 1000;
@@ -45,20 +30,14 @@ PulseSensor::PulseSensor() {
   amp = 100;                  // beat amplitude 1/10 of input range.
   firstBeat = true;           // looking for the first beat
   secondBeat = false;         // not yet looking for the second beat in a row
-
-  FadeLevel = 0; // LED is dark.
 }
 
 void PulseSensor::analogInput(int inputPin) {
   InputPin = inputPin;
 }
 
-void PulseSensor::blinkOnPulse(int blinkPin) {
-  BlinkPin = blinkPin;
-}
-
-void PulseSensor::fadeOnPulse(int fadePin) {
-  FadePin = fadePin;
+void PulseSensor::beepOnPulse(int beepPin) {
+  BeepPin = beepPin;
 }
 
 void PulseSensor::setThreshold(int threshold) {
@@ -118,10 +97,6 @@ void PulseSensor::processLatestSample() {
   sampleCounter += sampleIntervalMs;         // keep track of the time in mS with this variable
   int N = sampleCounter - lastBeatTime;      // monitor the time since the last beat to avoid noise
 
-  // Fade the Fading LED
-  FadeLevel = FadeLevel - FADE_LEVEL_PER_SAMPLE;
-  FadeLevel = constrain(FadeLevel, 0, MAX_FADE_LEVEL);
-
   //  find the peak and trough of the pulse wave
   if (Signal < thresh && N > (IBI / 5) * 3) { // avoid dichrotic noise by waiting 3/5 of last IBI
     if (Signal < T) {                        // T is the trough
@@ -169,7 +144,6 @@ void PulseSensor::processLatestSample() {
       runningTotal /= RATE_SIZE;                     // average the last 10 IBI values
       BPM = 60000 / runningTotal;             // how many beats can fit into a minute? that's BPM!
       QS = true;                              // set Quantified Self flag (we detected a beat)
-      FadeLevel = MAX_FADE_LEVEL;             // If we're fading, re-light that LED.
     }
   }
 
@@ -191,27 +165,9 @@ void PulseSensor::processLatestSample() {
   }
 }
 
-void PulseSensor::initializeLEDs() {
-  if (BlinkPin >= 0) {
-    pinMode(BlinkPin, OUTPUT);
-    digitalWrite(BlinkPin, LOW);
-  }
-  if (FadePin >= 0) {
-    pinMode(FadePin, OUTPUT);
-#if !defined(ESP32)
-    analogWrite(FadePin, 0); // turn off the LED.
-#endif
-  }
-}
-
-void PulseSensor::updateLEDs() {
-  if (BlinkPin >= 0) {
-    digitalWrite(BlinkPin, Pulse);
-  }
-
-  if (FadePin >= 0) {
-#if !defined(ESP32)
-    analogWrite(FadePin, FadeLevel / FADE_SCALE);
-#endif
+//音鳴りません
+void PulseSensor::playBeep() {
+  if(BeepPin > 0) {
+    M5.Speaker.beep();
   }
 }
