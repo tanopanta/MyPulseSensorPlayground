@@ -16,12 +16,6 @@ PulseSensorPlayground::PulseSensorPlayground() {
 boolean PulseSensorPlayground::PulseSensorPlayground::begin() {
   Sensor->initializeLEDs();
 
-  // Note the time, for non-interrupt sampling and for timing statistics.
-  NextSampleMicros = micros() + MICROS_PER_READ;
-
-  SawNewSample = false;
-
-
   // Lastly, set up and turn on the interrupts.
   if (!PulseSensorPlaygroundSetupInterrupt()) {
      // The user requested interrupts, but they aren't supported. Say so.
@@ -43,22 +37,6 @@ void PulseSensorPlayground::fadeOnPulse(int fadePin) {
   Sensor->fadeOnPulse(fadePin);
 }
 
-boolean PulseSensorPlayground::sawNewSample() {
-  /*
-     If using interrupts, this function reads and clears the
-     'saw a sample' flag that is set by the ISR.
-
-     When not using interrupts, this function sees whether it's time
-     to sample and, if so, reads the sample and processes it.
-  */
-  noInterrupts();
-  boolean sawOne = SawNewSample;
-  SawNewSample = false;
-  interrupts()
-
-  return sawOne;
-}
-
 
 void PulseSensorPlayground::onSampleTime() {
   // Typically called from the ISR.
@@ -72,9 +50,6 @@ void PulseSensorPlayground::onSampleTime() {
 
   Sensor->processLatestSample();
   Sensor->updateLEDs();
-
-  // Set the flag that says we've read a sample since the Sketch checked.
-  SawNewSample = true;
  }
 
 int PulseSensorPlayground::getLatestSample() {

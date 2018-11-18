@@ -31,15 +31,6 @@ class PulseSensorPlayground {
     */
     boolean begin();
 
-    /*
-       Returns true if a new sample has been read from each PulseSensor.
-       You'll likely want to add this call to your Sketch's loop()
-       only if you either 1) want to do something with each sample of the
-       PulseSensor signals, or 2) your Sketch doesn't use interrupts
-       to read from the PulseSensors.
-    */
-    boolean sawNewSample();
-
     //---------- Per-PulseSensor functions
 
     /*
@@ -182,7 +173,6 @@ class PulseSensorPlayground {
 
     PulseSensor *  Sensor;          // use Sensor to access a sensor.
     volatile unsigned long NextSampleMicros; // Desired time to sample next.
-    volatile boolean SawNewSample; // "A sample has arrived from the ISR"
 };
 
 /*
