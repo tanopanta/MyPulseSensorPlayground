@@ -1,17 +1,6 @@
 /*
    PulseSensor measurement manager.
    See https://www.pulsesensor.com to get started.
-
-   Copyright World Famous Electronics LLC - see LICENSE
-   Contributors:
-     Joel Murphy, https://pulsesensor.com
-     Yury Gitman, https://pulsesensor.com
-     Bradford Needham, @bneedhamia, https://bluepapertech.com
-
-   Licensed under the MIT License, a copy of which
-   should have been included with this software.
-
-   This software is not intended for medical use.
 */
 #ifndef PULSE_SENSOR_H
 #define PULSE_SENSOR_H

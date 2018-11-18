@@ -1,17 +1,12 @@
 #include "Interrupts.h"
 
-hw_timer_t * samplingTimer = NULL;
+Ticker samplingTimer;
 
 boolean PulseSensorPlaygroundSetupInterrupt() {
-  // This code sets up the sample timer interrupt
-  // based on the type of Arduino platform.
-    samplingTimer = timerBegin(TIMER0, 80, true);
-    timerAttachInterrupt(samplingTimer, &ISR, true);
-    timerAlarmWrite(samplingTimer, SAMPLE_PERIOD * 1000, true);
-    timerAlarmEnable(samplingTimer);
+    samplingTimer.attach_ms(SAMPLE_MS, ISR);
     return true;
 }
 
-void IRAM_ATTR ISR() {
+void ISR() {
     PulseSensorPlayground::OurThis->onSampleTime();
 }

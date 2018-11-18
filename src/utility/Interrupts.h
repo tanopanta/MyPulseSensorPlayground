@@ -4,12 +4,12 @@
 #define PULSE_SENSOR_INTERRUPTS_H
 
 #include <MyPulseSensorPlayground.h>
+#include <Ticker.h>
 
-#define TIMER0 0
-#define SAMPLE_PERIOD 2     // サンプリング間隔(ミリ秒)
+#define SAMPLE_MS 2     // サンプリング間隔(ミリ秒)
 
 boolean PulseSensorPlaygroundSetupInterrupt();
 
-void IRAM_ATTR ISR();
+void ISR();
 
 #endif // PULSE_SENSOR_INTERRUPTS_H
