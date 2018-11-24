@@ -88,6 +88,7 @@ void PulseSensor::readNextSample() {
 #else
   Signal = analogRead(InputPin);
 #endif
+  //Serial.println(Signal);
 }
 
 void PulseSensor::processLatestSample() {
@@ -169,5 +170,6 @@ void PulseSensor::processLatestSample() {
 void PulseSensor::playBeep() {
   if(BeepPin > 0) {
     M5.Speaker.beep();
+    M5.Speaker.mute();
   }
 }

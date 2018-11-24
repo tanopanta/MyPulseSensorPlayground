@@ -45,7 +45,6 @@ void PulseSensorPlayground::onSampleTime() {
   Sensor->readNextSample();
 
   Sensor->processLatestSample();
-  Sensor->playBeep();
 }
 
 int PulseSensorPlayground::getLatestSample() {
