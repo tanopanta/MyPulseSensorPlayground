@@ -23,11 +23,11 @@ PulseSensor::PulseSensor() {
   Pulse = false;
   sampleCounter = 0;
   lastBeatTime = 0;
-  P = 512;                    // peak at 1/2 the input range of 0..1023
-  T = 512;                    // trough at 1/2 the input range.
-  threshSetting = 550;        // used to seed and reset the thresh variable
-  thresh = 550;     // threshold a little above the trough
-  amp = 100;                  // beat amplitude 1/10 of input range.
+  P = 512 * 4;                    // peak at 1/2 the input range of 0..1023
+  T = 512 * 4;                    // trough at 1/2 the input range.
+  threshSetting = 550 * 4;        // used to seed and reset the thresh variable
+  thresh = 550 * 4;     // threshold a little above the trough
+  amp = 100 * 4;                  // beat amplitude 1/10 of input range.
   firstBeat = true;           // looking for the first beat
   secondBeat = false;         // not yet looking for the second beat in a row
 }
@@ -83,11 +83,7 @@ boolean PulseSensor::isInsideBeat() {
 
 void PulseSensor::readNextSample() {
   // We assume assigning to an int is atomic.
-#if defined(ESP32)
-  Signal = analogRead(InputPin) / 4;
-#else
   Signal = analogRead(InputPin);
-#endif
   //Serial.println(Signal);
 }
 
@@ -158,8 +154,8 @@ void PulseSensor::processLatestSample() {
 
   if (N > 2500) {                          // if 2.5 seconds go by without a beat
     thresh = threshSetting;                // set thresh default
-    P = 512;                               // set P default
-    T = 512;                               // set T default
+    P = 512 * 4;                               // set P default
+    T = 512 * 4;                               // set T default
     lastBeatTime = sampleCounter;          // bring the lastBeatTime up to date
     firstBeat = true;                      // set these to avoid noise
     secondBeat = false;                    // when we get the heartbeat back
